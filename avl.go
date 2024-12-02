@@ -96,41 +96,55 @@ func (tree *AvlTree[T]) Remove(value T) bool {
 	parent := node.parent
 	var replacement *Node[T]
 
-	// Action node is the node where the rebalancing starts
+	// Action node is the node where the rebalancing will start
 	actionNode := parent
 
-	if node.left == nil || node.right == nil { // Case 1: no children or one child
-		if node.right == nil {
-			replacement = node.left
-		} else {
-			replacement = node.right
-		}
-	} else { // Case 2: two children
+	// Case 1: two children, replace with in-order successor, then rebalance
+	if node.left != nil && node.right != nil {
+
 		// Find in-order successor (move right once then left all the way down)
 		successor := node.right
 		for successor.left != nil {
 			successor = successor.left
 		}
 
-		// Reassign the links between nodes
+		// Assign the children of the node to remove to the successor node
 		successor.left = node.left
+		// If the successor wasn't the right node, then we need to give it a
+		// right node. Otherwise, the successor's right node will be nil
 		if successor != node.right {
+			// We moved all the way down to the left.
+			// If the successor has a right node, put that right node in the
+			// successor's current spot
 			successor.parent.left = successor.right
 			if successor.right != nil {
 				successor.right.parent = successor.parent
 			}
+			// The successor now has both the node's children as its own
 			successor.right = node.right
 		}
+		// Complete the child->parent relationship
 		node.left.parent = successor
 		node.right.parent = successor
+
 		replacement = successor
+
 		actionNode = replacement.parent
+	} else {
+		// Case 2: one or no children, replace with existing child
+		if node.left == nil {
+			replacement = node.right
+		} else if node.right == nil {
+			replacement = node.left
+		}
 	}
+
 	tree.replaceChild(parent, node, replacement)
 	if replacement != nil {
 		replacement.parent = parent
 	}
 
+	// Rebalance from the parent of the node that got moved, up to the root
 	for actionNode != nil {
 		tree.rebalance(actionNode)
 		actionNode = actionNode.parent
