@@ -49,6 +49,15 @@ func (tree *AvlTree[T]) PrintTree(node *Node[T]) {
 	tree.PrintTree(node.right)
 }
 
+func (tree *AvlTree[T]) InorderTraverse(node *Node[T], queue *[]T) {
+	if node == nil {
+		return
+	}
+	tree.InorderTraverse(node.left, queue)
+	*queue = append(*queue, node.value)
+	tree.InorderTraverse(node.right, queue)
+}
+
 // Returns a bool indicating whether the value exists in the tree
 func (tree *AvlTree[T]) Contains(value T) bool {
 	return tree.getNodeByValue(value) != nil
@@ -218,21 +227,12 @@ func (tree *AvlTree[T]) getNodeByValue(value T) *Node[T] {
 	return nil
 }
 
-func (tree *AvlTree[T]) inorderTraverse(node *Node[T], queue *[]T) {
-	if node == nil {
-		return
-	}
-	tree.inorderTraverse(node.left, queue)
-	*queue = append(*queue, node.value)
-	tree.inorderTraverse(node.right, queue)
-}
-
 func (tree *AvlTree[T]) getTreeValues(node *Node[T]) []T {
 	if node == nil {
 		return []T{}
 	}
 	values := []T{}
-	tree.inorderTraverse(tree.root, &values)
+	tree.InorderTraverse(tree.root, &values)
 	return values
 }
 
