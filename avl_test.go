@@ -58,7 +58,7 @@ func TestIntegerTree(t *testing.T) {
 
 	for i, testCase := range cases {
 		tree := populateTree(testCase)
-		actual := tree.getTreeValues(tree.root)
+		actual := tree.InorderTraverse(tree.root, nil)
 		expected := slices.Clone(testCase)
 		slices.Sort(expected)
 		if !slices.Equal(actual, expected) {
@@ -84,7 +84,7 @@ func TestStringTree(t *testing.T) {
 			tree.Add(value)
 		}
 
-		actual := tree.getTreeValues(tree.root)
+		actual := tree.InorderTraverse(tree.root, nil)
 		expected := slices.Clone(testCase)
 		slices.Sort(expected)
 
@@ -109,7 +109,7 @@ func TestFloatTree(t *testing.T) {
 			tree.Add(value)
 		}
 
-		actual := tree.getTreeValues(tree.root)
+		actual := tree.InorderTraverse(tree.root, nil)
 		expected := slices.Clone(testCase)
 		slices.Sort(expected)
 
@@ -172,7 +172,7 @@ func TestRemoveValues(t *testing.T) {
 			}
 
 			// Ensure order was maintained during removal
-			actualValues := tree.getTreeValues(tree.root)
+			actualValues := tree.InorderTraverse(tree.root, nil)
 			expectedValues := slices.Clone(actualValues)
 			slices.Sort(expectedValues)
 			if !slices.Equal(actualValues, expectedValues) {

@@ -49,13 +49,19 @@ func (tree *AvlTree[T]) PrintTree(node *Node[T]) {
 	tree.PrintTree(node.right)
 }
 
-func (tree *AvlTree[T]) InorderTraverse(node *Node[T], queue *[]T) {
-	if node == nil {
-		return
+// Returns a slice of the tree's values in-order. Appends to the provided
+// pointer to a slice. If the pointer is nil, a new slice is created.
+func (tree *AvlTree[T]) InorderTraverse(node *Node[T], queue *[]T) []T {
+	if queue == nil {
+		queue = &[]T{}
 	}
-	tree.InorderTraverse(node.left, queue)
+	if node == nil {
+		return *queue
+	}
+	*queue = tree.InorderTraverse(node.left, queue)
 	*queue = append(*queue, node.value)
-	tree.InorderTraverse(node.right, queue)
+	*queue = tree.InorderTraverse(node.right, queue)
+	return *queue
 }
 
 // Returns a bool indicating whether the value exists in the tree
@@ -225,15 +231,6 @@ func (tree *AvlTree[T]) getNodeByValue(value T) *Node[T] {
 		}
 	}
 	return nil
-}
-
-func (tree *AvlTree[T]) getTreeValues(node *Node[T]) []T {
-	if node == nil {
-		return []T{}
-	}
-	values := []T{}
-	tree.InorderTraverse(tree.root, &values)
-	return values
 }
 
 func (tree *AvlTree[T]) rebalance(node *Node[T]) {
