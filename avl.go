@@ -172,6 +172,10 @@ func (tree *AvlTree[T]) GetRootNode() *Node[T] {
 	return tree.root
 }
 
+func (tree *AvlTree[T]) IsEmpty() bool {
+	return tree.root == nil
+}
+
 // %% Private methods %%
 
 // %%% Node private methods %%%
