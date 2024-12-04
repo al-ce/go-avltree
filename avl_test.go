@@ -59,7 +59,7 @@ func deepCopyTestCases(original [][]int) [][]int {
 
 // Test insertNode method, checking that insertion follows BST properties
 func TestInsertNode(t *testing.T) {
-	cases = [][]int{
+	insertCases := [][]int{
 		{10, 5, 15, 4, 6, 14, 16},        // Positives
 		{0, -5, 5, -6, -4, 4, 6},         // Zero
 		{-10, -15, -5, -16, -14, -6, -4}, // Negatives
@@ -83,7 +83,7 @@ func TestInsertNode(t *testing.T) {
 		rsubr int
 	}
 
-	for _, testCase := range cases {
+	for _, testCase := range insertCases {
 		tree := NewAvlTree[int]()
 		sample := sampleTree{
 			root:  testCase[0],
