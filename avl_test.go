@@ -27,6 +27,7 @@ func assertSlice[T comparable](a, b []T, msg string, t *testing.T) {
 }
 
 var cases = [][]int{
+	{},                    // Empty tree
 	{1, 2, 3},             // Right-Right case
 	{1, 3, 2},             // Right-Left case
 	{2, 1, 3},             // Left-Left case
