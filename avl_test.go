@@ -1,6 +1,7 @@
 package avl
 
 import (
+	"fmt"
 	"slices"
 	"testing"
 )
@@ -11,6 +12,18 @@ func rangeWithSteps(start, end, step int) []int {
 		result = append(result, i)
 	}
 	return result
+}
+
+func assert[T comparable](a, b T, msg string, t *testing.T) {
+	if a != b {
+		t.Errorf("%s %v != %v", msg, a, b)
+	}
+}
+
+func assertSlice[T comparable](a, b []T, msg string, t *testing.T) {
+	if !slices.Equal(a, b) {
+		t.Errorf("%s\nexpected: %v\ngot: %v", msg, b, a)
+	}
 }
 
 var cases = [][]int{
@@ -44,10 +57,79 @@ func deepCopyTestCases(original [][]int) [][]int {
 	return sliceCopy
 }
 
-func populateTree(values []int) *AvlTree[int] {
+// Test insertNode method, checking that insertion follows BST properties
+func TestInsertNode(t *testing.T) {
+	cases = [][]int{
+		{10, 5, 15, 4, 6, 14, 16},        // Positives
+		{0, -5, 5, -6, -4, 4, 6},         // Zero
+		{-10, -15, -5, -16, -14, -6, -4}, // Negatives
+
+		// Example:
+		//      10
+		//     /  \
+		//    /    \
+		//   5     15
+		//  / \   /  \
+		// 4   6 14   16
+	}
+
+	type sampleTree struct {
+		root  int
+		lsub  int
+		rsub  int
+		lsubl int
+		lsubr int
+		rsubl int
+		rsubr int
+	}
+
+	for _, testCase := range cases {
+		tree := NewAvlTree[int]()
+		sample := sampleTree{
+			root:  testCase[0],
+			lsub:  testCase[1],
+			rsub:  testCase[2],
+			lsubl: testCase[3],
+			lsubr: testCase[4],
+			rsubl: testCase[5],
+			rsubr: testCase[6],
+		}
+		for _, v := range testCase {
+			tree.insertNode(v)
+		}
+
+		root := tree.GetRootNode()
+
+		assert(root.value, sample.root, "insertNode (root)", t)
+		assert(root.left.value, sample.lsub, "insertNode(root.left)", t)
+		assert(root.right.value, sample.rsub, "insertNode(root.right)", t)
+		assert(root.left.left.value, sample.lsubl, "insertNode(root.left.left)", t)
+		assert(root.left.right.value, sample.lsubr, "insertNode(root.left.right)", t)
+		assert(root.right.left.value, sample.rsubl, "insertNode(root.right.left)", t)
+		assert(root.right.right.value, sample.rsubr, "insertNode(root.right.right)", t)
+
+	}
+}
+
+// Test Contains method, indicating whether a value exists in the AVL tree.
+func TestContains(t *testing.T) {
+	cases = deepCopyTestCases(cases)
+	for _, testCase := range cases {
+		values := testCase
+		tree := NewAvlTree[int]()
+
+		for _, v := range values {
+			tree.insertNode(v)
+			assert(tree.Contains(v), true, fmt.Sprintf("tree.Contains(%v)", v), t)
+		}
+	}
+}
+
+func populateTree(t *testing.T, values []int) *AvlTree[int] {
 	tree := NewAvlTree[int]()
-	for _, value := range values {
-		tree.Add(value)
+	for _, v := range values {
+		tree.Add(v)
+		assert(tree.Contains(v), true, fmt.Sprintf("tree.Add(%v", v), t)
 	}
 	return tree
 }
@@ -56,14 +138,12 @@ func populateTree(values []int) *AvlTree[int] {
 func TestIntegerTree(t *testing.T) {
 	cases = deepCopyTestCases(cases)
 
-	for i, testCase := range cases {
-		tree := populateTree(testCase)
+	for _, testCase := range cases {
+		tree := populateTree(t, testCase)
 		actual := tree.InorderTraverse(tree.root, nil)
 		expected := slices.Clone(testCase)
 		slices.Sort(expected)
-		if !slices.Equal(actual, expected) {
-			t.Errorf("Test case %d: tree.Add(...) = %v; want %v", i, actual, expected)
-		}
+		assertSlice(actual, expected, "tree.Add(...)", t)
 	}
 }
 
@@ -77,20 +157,19 @@ func TestStringTree(t *testing.T) {
 		{"e", "d", "c", "b", "a"},          // Reversed sequence
 	}
 
-	for i, testCase := range cases {
+	for _, testCase := range cases {
 		tree := NewAvlTree[string]()
 
 		for _, value := range testCase {
 			tree.Add(value)
+			assert(tree.Contains(value), true, fmt.Sprintf("tree.Add(%v)", value), t)
 		}
 
 		actual := tree.InorderTraverse(tree.root, nil)
 		expected := slices.Clone(testCase)
 		slices.Sort(expected)
 
-		if !slices.Equal(actual, expected) {
-			t.Errorf("Test case %d: tree.Add(...) = %v; want %v", i, actual, expected)
-		}
+		assertSlice(actual, expected, "tree.Add(...)", t)
 	}
 }
 
@@ -102,101 +181,61 @@ func TestFloatTree(t *testing.T) {
 		{2.2, 1.1, 3.3}, // Mixed
 	}
 
-	for i, testCase := range cases {
+	for _, testCase := range cases {
 		tree := NewAvlTree[float64]()
 
 		for _, value := range testCase {
 			tree.Add(value)
+			assert(tree.Contains(value), true, fmt.Sprintf("tree.Add(%v)", value), t)
 		}
 
 		actual := tree.InorderTraverse(tree.root, nil)
 		expected := slices.Clone(testCase)
 		slices.Sort(expected)
-
-		if !slices.Equal(actual, expected) {
-			t.Errorf("Test case %d: tree.Add(...) = %v; want %v", i, actual, expected)
-		}
+		assertSlice(actual, expected, "tree.Add(...)", t)
 	}
 }
 
-// Test Contains method, indicating whether a value exists in the AVL tree
-func TestContains(t *testing.T) {
-	cases = deepCopyTestCases(cases)
-	for _, testCase := range cases {
-		values := testCase
-		tree := populateTree(values)
-		for _, v := range values {
-			actual := tree.Contains(v)
-			expected := true
-			if actual != expected {
-				t.Errorf("Test contains value: tree.Contains(%v) = %v; want %v", v, actual, expected)
-			}
-		}
-	}
-}
-
+// Test negative case for Contains method
 func TestDoesNotContain(t *testing.T) {
-	tree := populateTree([]int{1, 2, 3})
-	actual := tree.Contains(4)
-	expected := false
-	if actual != expected {
-		t.Errorf("Test contains value: tree.Contains(4) = %v; want %v", actual, expected)
-	}
-}
-
-// Test removing a value that does not exist in the AVL tree
-func TestRemoveNonexistingValue(t *testing.T) {
-	values := []int{1, 2, 3}
-	tree := populateTree(values)
-	actual := tree.Remove(0)
-	expected := tree.Contains(0)
-	if actual != expected {
-		t.Errorf("Test remove non-existing value: tree.Remove(0) = %v; want %v", actual, expected)
-	}
+	tree := populateTree(t, []int{1, 2, 3})
+	assert(tree.Contains(4), false, "tree.Contains(4)", t)
 }
 
 // Test removing a value that does not exist in the AVL tree
 func TestRemoveValues(t *testing.T) {
-	for i, testCase := range cases {
-		for j, v := range testCase {
-			tree := populateTree(testCase)
+	for _, testCase := range cases {
+		for _, v := range testCase {
+			tree := populateTree(t, testCase)
 
 			// Successful remove returns true, so negate this to check against
 			// `Contains(value) == false`
-
-			actual := !tree.Remove(v)
-			expected := tree.Contains(v)
-
-			if actual != expected {
-				t.Errorf("Test case %d.%d: tree.Remove(%v) = %v; want %v", i+1, j, v, actual, expected)
-			}
+			assert(tree.Remove(v), !tree.Contains(v), "tree.Remove(v)", t)
 
 			// Ensure order was maintained during removal
 			actualValues := tree.InorderTraverse(tree.root, nil)
 			expectedValues := slices.Clone(actualValues)
 			slices.Sort(expectedValues)
-			if !slices.Equal(actualValues, expectedValues) {
-				t.Errorf("Test case %d.%d: tree.Remove(%v) = %v; want %v", i+1, j, v, actual, expected)
-			}
+			assertSlice(actualValues, expectedValues, "tree.Remove(v)", t)
 
 		}
 	}
 }
 
+// Test removing a value that does not exist in the AVL tree (negative case)
+func TestRemoveNonexistingValue(t *testing.T) {
+	values := []int{1, 2, 3}
+	tree := populateTree(t, values)
+	assert(tree.Remove(0), tree.Contains(0), "tree.Remove(0)", t)
+}
+
 // Test removing multiple values until the tree is empty
 func TestRemoveMultipleValues(t *testing.T) {
-	for i, testCase := range cases {
-		tree := populateTree(testCase)
-		for j, v := range testCase {
+	for _, testCase := range cases {
+		tree := populateTree(t, testCase)
+		for _, v := range testCase {
 
-			// Successful remove returns true, so negate this to check against
-			// `Contains(value) == false`
-			actual := !tree.Remove(v)
-			expected := tree.Contains(v)
-
-			if actual != expected {
-				t.Errorf("Test case %d.%d: tree.Remove(%v) = %v; want %v", i+1, j, v, actual, expected)
-			}
+			assert(tree.Remove(v), !tree.Contains(v), fmt.Sprintf("tree.Remove(%v)", v), t)
 		}
 	}
 }

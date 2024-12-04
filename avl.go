@@ -74,28 +74,7 @@ func (tree *AvlTree[T]) Contains(value T) bool {
 }
 
 func (tree *AvlTree[T]) Add(value T) {
-	newNode := Node[T]{value: value, height: 0}
-	if tree.root == nil {
-		tree.root = &newNode
-		return
-	}
-
-	var parent *Node[T]
-	next := tree.root
-	for next != nil {
-		parent = next
-		if value < next.value {
-			next = next.left
-		} else {
-			next = next.right
-		}
-	}
-
-	if value < parent.value {
-		parent.left = &newNode
-	} else {
-		parent.right = &newNode
-	}
+	newNode, parent := tree.insertNode(value)
 	newNode.parent = parent
 
 	for parent != nil {
@@ -225,6 +204,34 @@ func (node *Node[T]) updateHeight() {
 }
 
 // %%% Tree private methods %%%
+
+// Insert a node on the tree while maintaining the binary search tree property
+// Returns the inserted node and its parent.
+func (tree *AvlTree[T]) insertNode(value T) (*Node[T], *Node[T]) {
+	newNode := NewTreeNode(value)
+	if tree.root == nil {
+		tree.root = newNode
+		return newNode, nil
+	}
+
+	var parent *Node[T]
+	next := tree.root
+	for next != nil {
+		parent = next
+		if value < next.value {
+			next = next.left
+		} else {
+			next = next.right
+		}
+	}
+
+	if value < parent.value {
+		parent.left = newNode
+	} else {
+		parent.right = newNode
+	}
+	return newNode, parent
+}
 
 func (tree *AvlTree[T]) getNodeByValue(value T) *Node[T] {
 	if tree.root == nil {
