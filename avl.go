@@ -40,6 +40,10 @@ func NewAvlTree[T constraints.Ordered]() *AvlTree[T] {
 	return &AvlTree[T]{root: nil}
 }
 
+// %%% Node public methods %%%
+
+// %%% Tree public methods %%%
+
 func (tree *AvlTree[T]) PrintTree(node *Node[T]) {
 	if node == nil {
 		return
