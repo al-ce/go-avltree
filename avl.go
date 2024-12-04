@@ -168,6 +168,10 @@ func (tree *AvlTree[T]) Remove(value T) bool {
 	return true
 }
 
+func (tree *AvlTree[T]) GetRootNode() *Node[T] {
+	return tree.root
+}
+
 // %% Private methods %%
 
 // %%% Node private methods %%%
