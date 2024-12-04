@@ -234,8 +234,8 @@ func TestRemoveMultipleValues(t *testing.T) {
 	for _, testCase := range cases {
 		tree := populateTree(t, testCase)
 		for _, v := range testCase {
-
 			assert(tree.Remove(v), !tree.Contains(v), fmt.Sprintf("tree.Remove(%v)", v), t)
 		}
+		assert(tree.IsEmpty(), true, "tree.IsEmpty()", t)
 	}
 }
