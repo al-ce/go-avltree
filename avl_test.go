@@ -260,3 +260,16 @@ func TestGetMinNode(t *testing.T) {
 		}
 	}
 }
+
+func TestGetMaxNode(t *testing.T) {
+	var maxValue int
+	for _, testCase := range cases {
+		tree := populateTree(t, testCase)
+		if len(testCase) == 0 { // Empty tree case
+			assert(tree.GetMaxNode(), nil, "tree.GetMax()", t)
+		} else {
+			maxValue = slices.Max(testCase)
+			assert(tree.GetMaxNode().value, maxValue, "tree.GetMax()", t)
+		}
+	}
+}

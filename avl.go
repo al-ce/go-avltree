@@ -171,6 +171,14 @@ func (tree *AvlTree[T]) GetMinNode() *Node[T] {
 	return curr
 }
 
+func (tree *AvlTree[T]) GetMaxNode() *Node[T] {
+	curr := tree.root
+	for curr != nil && curr.right != nil {
+		curr = curr.right
+	}
+	return curr
+}
+
 // %% Private methods %%
 
 // %%% Node private methods %%%
