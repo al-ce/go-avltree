@@ -239,3 +239,10 @@ func TestRemoveMultipleValues(t *testing.T) {
 		assert(tree.IsEmpty(), true, "tree.IsEmpty()", t)
 	}
 }
+
+func TestClearTree(t *testing.T) {
+	testCase := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+	tree := populateTree(t, testCase)
+	tree.Clear()
+	assert(tree.IsEmpty(), true, "tree.Clear()", t)
+}

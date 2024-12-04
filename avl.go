@@ -159,6 +159,10 @@ func (tree *AvlTree[T]) IsEmpty() bool {
 	return tree.root == nil
 }
 
+func (tree *AvlTree[T]) Clear() {
+	tree.root = nil
+}
+
 // %% Private methods %%
 
 // %%% Node private methods %%%
