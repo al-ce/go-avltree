@@ -17,6 +17,7 @@ type Node[T constraints.Ordered] struct {
 
 type AvlTree[T constraints.Ordered] struct {
 	root *Node[T]
+	size int
 }
 
 func (node *Node[T]) balanceFactor() int {
@@ -81,6 +82,7 @@ func (tree *AvlTree[T]) Add(value T) {
 		tree.rebalance(parent)
 		parent = parent.parent
 	}
+	tree.size += 1
 }
 
 // Remove a node from the tree by value lookup.
@@ -148,6 +150,7 @@ func (tree *AvlTree[T]) Remove(value T) bool {
 		actionNode = actionNode.parent
 	}
 
+	tree.size -= 1
 	return true
 }
 
@@ -161,6 +164,7 @@ func (tree *AvlTree[T]) IsEmpty() bool {
 
 func (tree *AvlTree[T]) Clear() {
 	tree.root = nil
+	tree.size = 0
 }
 
 func (tree *AvlTree[T]) GetMinNode() *Node[T] {
@@ -177,6 +181,10 @@ func (tree *AvlTree[T]) GetMaxNode() *Node[T] {
 		curr = curr.right
 	}
 	return curr
+}
+
+func (tree *AvlTree[T]) GetSize() int {
+	return tree.size
 }
 
 // %% Private methods %%
