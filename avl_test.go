@@ -247,3 +247,16 @@ func TestClearTree(t *testing.T) {
 	tree.Clear()
 	assert(tree.IsEmpty(), true, "tree.Clear()", t)
 }
+
+func TestGetMinNode(t *testing.T) {
+	var minValue int
+	for _, testCase := range cases {
+		tree := populateTree(t, testCase)
+		if len(testCase) == 0 { // Empty tree case
+			assert(tree.GetMinNode(), nil, "tree.GetMin()", t)
+		} else {
+			minValue = slices.Min(testCase)
+			assert(tree.GetMinNode().value, minValue, "tree.GetMin()", t)
+		}
+	}
+}

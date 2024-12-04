@@ -163,6 +163,14 @@ func (tree *AvlTree[T]) Clear() {
 	tree.root = nil
 }
 
+func (tree *AvlTree[T]) GetMinNode() *Node[T] {
+	curr := tree.root
+	for curr != nil && curr.left != nil {
+		curr = curr.left
+	}
+	return curr
+}
+
 // %% Private methods %%
 
 // %%% Node private methods %%%
