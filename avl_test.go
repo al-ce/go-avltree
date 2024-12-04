@@ -203,7 +203,7 @@ func TestDoesNotContain(t *testing.T) {
 	assert(tree.Contains(4), false, "tree.Contains(4)", t)
 }
 
-// Test removing a value that does not exist in the AVL tree
+// Test removing a value from the tree
 func TestRemoveValues(t *testing.T) {
 	for _, testCase := range cases {
 		for _, v := range testCase {
