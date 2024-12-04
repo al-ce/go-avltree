@@ -32,9 +32,9 @@ func (node *Node[T]) balanceFactor() int {
 
 // %% Public methods %%
 
-// %%% Node public methods %%%
-
-// %%% Tree public methods %%%
+func NewTreeNode[T constraints.Ordered](value T) *Node[T] {
+	return &Node[T]{value: value, height: 0}
+}
 
 func NewAvlTree[T constraints.Ordered]() *AvlTree[T] {
 	return &AvlTree[T]{root: nil}
