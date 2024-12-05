@@ -49,15 +49,6 @@ var cases = [][]int{
 	rangeWithSteps(0, 34, 3),
 }
 
-func deepCopyTestCases(original [][]int) [][]int {
-	sliceCopy := make([][]int, len(original))
-	for i, slice := range original {
-		sliceCopy[i] = make([]int, len(slice))
-		copy(sliceCopy[i], slice)
-	}
-	return sliceCopy
-}
-
 // Test insertNode method, checking that insertion follows BST properties
 func TestInsertNode(t *testing.T) {
 	insertCases := [][]int{
@@ -114,7 +105,6 @@ func TestInsertNode(t *testing.T) {
 
 // Test Contains method, indicating whether a value exists in the AVL tree.
 func TestContains(t *testing.T) {
-	cases = deepCopyTestCases(cases)
 	for _, testCase := range cases {
 		values := testCase
 		tree := NewAvlTree[int]()
@@ -139,7 +129,6 @@ func populateTree(t *testing.T, values []int) *AvlTree[int] {
 
 // Tests the AVL tree with integer values, covering all basic rotation cases
 func TestIntegerTree(t *testing.T) {
-	cases = deepCopyTestCases(cases)
 
 	for _, testCase := range cases {
 		tree := populateTree(t, testCase)
