@@ -43,6 +43,7 @@ func NewAvlTree[T constraints.Ordered]() *AvlTree[T] {
 	return &AvlTree[T]{root: nil}
 }
 
+// Insert a node with the given value and rebalance the tree.
 func (tree *AvlTree[T]) Add(value T) {
 	newNode, parent := tree.insertNode(value)
 	newNode.parent = parent
@@ -54,7 +55,7 @@ func (tree *AvlTree[T]) Add(value T) {
 	tree.size += 1
 }
 
-// Remove a node from the tree by value lookup.
+// Remove a node by value lookup and rebalance the tree.
 // Returns true on successful removal, false if value was not found.
 func (tree *AvlTree[T]) Remove(value T) bool {
 	node := tree.getNodeByValue(value)
@@ -127,15 +128,19 @@ func (tree *AvlTree[T]) Remove(value T) bool {
 func (tree *AvlTree[T]) Contains(value T) bool {
 	return tree.getNodeByValue(value) != nil
 }
+
+// Clear the tree, removing all nodes
 func (tree *AvlTree[T]) Clear() {
 	tree.root = nil
 	tree.size = 0
 }
 
+// Returns a bool indicating whether the tree is empty
 func (tree *AvlTree[T]) IsEmpty() bool {
 	return tree.root == nil
 }
 
+// Return the minimum value in the tree
 func (tree *AvlTree[T]) GetMin() (T, error) {
 	curr := tree.root
 	for curr != nil && curr.left != nil {
@@ -149,6 +154,7 @@ func (tree *AvlTree[T]) GetMin() (T, error) {
 	return curr.value, nil
 }
 
+// Return the maximum value in the tree
 func (tree *AvlTree[T]) GetMax() (T, error) {
 	curr := tree.root
 	for curr != nil && curr.right != nil {
@@ -161,6 +167,7 @@ func (tree *AvlTree[T]) GetMax() (T, error) {
 	return curr.value, nil
 }
 
+// Return the number of nodes in the tree
 func (tree *AvlTree[T]) Size() int {
 	return tree.size
 }
@@ -180,7 +187,8 @@ func (tree *AvlTree[T]) InorderTraverse(node *Node[T], queue *[]T) []T {
 	return *queue
 }
 
-// Returns a new iterator for the tree
+// Returns a new iterator for the tree. Call Next() on the iterator
+// to get the next value in the tree in-order.
 func (tree *AvlTree[T]) NewIterator() *AvlTreeIterator[T] {
 	return &AvlTreeIterator[T]{
 		tree:  tree,
@@ -189,6 +197,7 @@ func (tree *AvlTree[T]) NewIterator() *AvlTreeIterator[T] {
 	}
 }
 
+// Print the tree in-order
 func (tree *AvlTree[T]) PrintTree(node *Node[T]) {
 	if node == nil {
 		return
