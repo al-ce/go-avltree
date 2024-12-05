@@ -39,17 +39,9 @@ func (node *Node[T]) balanceFactor() int {
 
 // %% Public methods %%
 
-func NewTreeNode[T constraints.Ordered](value T) *Node[T] {
-	return &Node[T]{value: value, height: 0}
-}
-
 func NewAvlTree[T constraints.Ordered]() *AvlTree[T] {
 	return &AvlTree[T]{root: nil}
 }
-
-// %%% Node public methods %%%
-
-// %%% Tree public methods %%%
 
 func (tree *AvlTree[T]) Add(value T) {
 	newNode, parent := tree.insertNode(value)
@@ -250,9 +242,11 @@ func (iter *AvlTreeIterator[T]) Next() (T, int) {
 	return nextNode.value, index
 }
 
-// %% Private methods %%
-
 // %%% Node private methods %%%
+
+func newTreeNode[T constraints.Ordered](value T) *Node[T] {
+	return &Node[T]{value: value, height: 0}
+}
 
 func (node *Node[T]) rotateLeft() *Node[T] {
 	child := node.right
@@ -299,7 +293,7 @@ func (node *Node[T]) updateHeight() {
 // Insert a node on the tree while maintaining the binary search tree property
 // Returns the inserted node and its parent.
 func (tree *AvlTree[T]) insertNode(value T) (*Node[T], *Node[T]) {
-	newNode := NewTreeNode(value)
+	newNode := newTreeNode(value)
 	if tree.root == nil {
 		tree.root = newNode
 		return newNode, nil
