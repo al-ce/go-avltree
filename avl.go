@@ -51,35 +51,6 @@ func NewAvlTree[T constraints.Ordered]() *AvlTree[T] {
 
 // %%% Tree public methods %%%
 
-func (tree *AvlTree[T]) PrintTree(node *Node[T]) {
-	if node == nil {
-		return
-	}
-	tree.PrintTree(node.left)
-	fmt.Println(node.value)
-	tree.PrintTree(node.right)
-}
-
-// Returns a slice of the tree's values in-order. Appends to the provided
-// pointer to a slice. If the pointer is nil, a new slice is created.
-func (tree *AvlTree[T]) InorderTraverse(node *Node[T], queue *[]T) []T {
-	if queue == nil {
-		queue = &[]T{}
-	}
-	if node == nil {
-		return *queue
-	}
-	*queue = tree.InorderTraverse(node.left, queue)
-	*queue = append(*queue, node.value)
-	*queue = tree.InorderTraverse(node.right, queue)
-	return *queue
-}
-
-// Returns a bool indicating whether the value exists in the tree
-func (tree *AvlTree[T]) Contains(value T) bool {
-	return tree.getNodeByValue(value) != nil
-}
-
 func (tree *AvlTree[T]) Add(value T) {
 	newNode, parent := tree.insertNode(value)
 	newNode.parent = parent
@@ -160,17 +131,21 @@ func (tree *AvlTree[T]) Remove(value T) bool {
 	return true
 }
 
-func (tree *AvlTree[T]) GetRootNode() *Node[T] {
-	return tree.root
+// Returns a bool indicating whether the value exists in the tree
+func (tree *AvlTree[T]) Contains(value T) bool {
+	return tree.getNodeByValue(value) != nil
+}
+func (tree *AvlTree[T]) Clear() {
+	tree.root = nil
+	tree.size = 0
 }
 
 func (tree *AvlTree[T]) IsEmpty() bool {
 	return tree.root == nil
 }
 
-func (tree *AvlTree[T]) Clear() {
-	tree.root = nil
-	tree.size = 0
+func (tree *AvlTree[T]) GetRootNode() *Node[T] {
+	return tree.root
 }
 
 func (tree *AvlTree[T]) GetMinNode() *Node[T] {
@@ -193,6 +168,21 @@ func (tree *AvlTree[T]) GetSize() int {
 	return tree.size
 }
 
+// Returns a slice of the tree's values in-order. Appends to the provided
+// pointer to a slice. If the pointer is nil, a new slice is created.
+func (tree *AvlTree[T]) InorderTraverse(node *Node[T], queue *[]T) []T {
+	if queue == nil {
+		queue = &[]T{}
+	}
+	if node == nil {
+		return *queue
+	}
+	*queue = tree.InorderTraverse(node.left, queue)
+	*queue = append(*queue, node.value)
+	*queue = tree.InorderTraverse(node.right, queue)
+	return *queue
+}
+
 // Returns a new iterator for the tree
 func (tree *AvlTree[T]) NewIterator() *AvlTreeIterator[T] {
 	return &AvlTreeIterator[T]{
@@ -201,6 +191,17 @@ func (tree *AvlTree[T]) NewIterator() *AvlTreeIterator[T] {
 		index: 0,
 	}
 }
+
+func (tree *AvlTree[T]) PrintTree(node *Node[T]) {
+	if node == nil {
+		return
+	}
+	tree.PrintTree(node.left)
+	fmt.Println(node.value)
+	tree.PrintTree(node.right)
+}
+
+// %%% Iterator public methods %%%
 
 // Returns the next value in the tree and its index in the in-order traversal
 // from the iterator. If the end of the tree is reached, the zero value of the
