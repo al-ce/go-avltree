@@ -20,6 +20,12 @@ type AvlTree[T constraints.Ordered] struct {
 	size int
 }
 
+type AvlTreeIterator[T constraints.Ordered] struct {
+	tree  *AvlTree[T]
+	stack []*Node[T]
+	index int
+}
+
 func (node *Node[T]) balanceFactor() int {
 	leftHeight, rightHeight := -1, -1
 	if node.left != nil {
@@ -185,6 +191,57 @@ func (tree *AvlTree[T]) GetMaxNode() *Node[T] {
 
 func (tree *AvlTree[T]) GetSize() int {
 	return tree.size
+}
+
+// Returns a new iterator for the tree
+func (tree *AvlTree[T]) NewIterator() *AvlTreeIterator[T] {
+	return &AvlTreeIterator[T]{
+		tree:  tree,
+		stack: make([]*Node[T], 0),
+		index: 0,
+	}
+}
+
+// Returns the next value in the tree and its index in the in-order traversal
+// from the iterator. If the end of the tree is reached, the zero value of the
+// type is returned and -1 is returned as the index.
+func (iter *AvlTreeIterator[T]) Next() (T, int) {
+	if iter.index == 0 {
+
+		// Handle empty tree
+		if iter.tree.root == nil {
+			var zero T
+			return zero, -1
+		}
+
+		// Push root and all left children onto stack
+		curr := iter.tree.root
+		for curr != nil {
+			iter.stack = append(iter.stack, curr)
+			curr = curr.left
+		}
+	}
+
+	// End of tree reached
+	if iter.index >= iter.tree.size {
+		var zero T
+		return zero, -1
+	}
+
+	// Pop from the stack
+	nextNode := iter.stack[len(iter.stack)-1]
+	iter.stack = iter.stack[:len(iter.stack)-1]
+
+	// Push right child and all its left children
+	curr := nextNode.right
+	for curr != nil {
+		iter.stack = append(iter.stack, curr)
+		curr = curr.left
+	}
+
+	index := iter.index
+	iter.index += 1
+	return nextNode.value, index
 }
 
 // %% Private methods %%

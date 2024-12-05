@@ -270,3 +270,34 @@ func TestGetMaxNode(t *testing.T) {
 		}
 	}
 }
+
+// Test AvlTreeIterator.Next() returns next in-order value on each call
+func TestAvlTreeIterator(t *testing.T) {
+	for _, testCase := range cases {
+		tree := populateTree(t, testCase)
+
+		iter := tree.NewIterator()
+		actual := make([]int, 0)
+
+		expected := slices.Clone(testCase)
+		slices.Sort(expected)
+
+		v, index := iter.Next()
+		for index != -1 {
+			actual = append(actual, v)
+			// Test next slice value is the same as sorted test case at index
+			assert(v, expected[index], "iterator.Next()", t)
+			v, index = iter.Next()
+		}
+
+		// Test slice created from iterator is sorted
+		assertSlice(actual, expected, "tree iterator", t)
+
+		// Test that subsequent calls to iter.Next() return -1 index
+		for range testCase {
+			_, index = iter.Next()
+			assert(index, -1, "iterator.Next() (end of iterator)", t)
+		}
+
+	}
+}
