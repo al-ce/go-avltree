@@ -90,7 +90,7 @@ func TestInsertNode(t *testing.T) {
 			tree.insertNode(v)
 		}
 
-		root := tree.GetRootNode()
+		root := tree.getRootNode()
 
 		assert(root.value, sample.root, "insertNode (root)", t)
 		assert(root.left.value, sample.lsub, "insertNode(root.left)", t)
@@ -246,27 +246,28 @@ func TestClearTree(t *testing.T) {
 }
 
 func TestGetMinNode(t *testing.T) {
-	var minValue int
 	for _, testCase := range cases {
 		tree := populateTree(t, testCase)
+		actualMinValue, err := tree.GetMin()
 		if len(testCase) == 0 { // Empty tree case
-			assert(tree.GetMinNode(), nil, "tree.GetMin()", t)
+			assert(err != nil, true, "tree.GetMin()", t)
 		} else {
-			minValue = slices.Min(testCase)
-			assert(tree.GetMinNode().value, minValue, "tree.GetMin()", t)
+			expectedMinValue := slices.Min(testCase)
+			assert(actualMinValue, expectedMinValue, "tree.GetMin()", t)
 		}
 	}
 }
 
 func TestGetMaxNode(t *testing.T) {
-	var maxValue int
 	for _, testCase := range cases {
 		tree := populateTree(t, testCase)
+		actualMaxValue, err := tree.GetMax()
 		if len(testCase) == 0 { // Empty tree case
-			assert(tree.GetMaxNode(), nil, "tree.GetMax()", t)
+			assert(err != nil, true, "tree.GetMax()", t)
 		} else {
-			maxValue = slices.Max(testCase)
-			assert(tree.GetMaxNode().value, maxValue, "tree.GetMax()", t)
+			expectedMaxValue := slices.Max(testCase)
+			// assert(tree.GetMax().value, maxValue, "tree.GetMax()", t)
+			assert(actualMaxValue, expectedMaxValue, "tree.GetMax()", t)
 		}
 	}
 }

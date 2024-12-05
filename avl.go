@@ -144,24 +144,29 @@ func (tree *AvlTree[T]) IsEmpty() bool {
 	return tree.root == nil
 }
 
-func (tree *AvlTree[T]) GetRootNode() *Node[T] {
-	return tree.root
-}
-
-func (tree *AvlTree[T]) GetMinNode() *Node[T] {
+func (tree *AvlTree[T]) GetMin() (T, error) {
 	curr := tree.root
 	for curr != nil && curr.left != nil {
 		curr = curr.left
 	}
-	return curr
+
+	if curr == nil {
+		var zero T
+		return zero, fmt.Errorf("tree is empty")
+	}
+	return curr.value, nil
 }
 
-func (tree *AvlTree[T]) GetMaxNode() *Node[T] {
+func (tree *AvlTree[T]) GetMax() (T, error) {
 	curr := tree.root
 	for curr != nil && curr.right != nil {
 		curr = curr.right
 	}
-	return curr
+	if curr == nil {
+		var zero T
+		return zero, fmt.Errorf("tree is empty")
+	}
+	return curr.value, nil
 }
 
 func (tree *AvlTree[T]) GetSize() int {
@@ -362,6 +367,10 @@ func (tree *AvlTree[T]) rebalance(node *Node[T]) {
 	}
 	newSubtreeRoot.parent = nodeParent
 	tree.replaceChild(nodeParent, node, newSubtreeRoot)
+}
+
+func (tree *AvlTree[T]) getRootNode() *Node[T] {
+	return tree.root
 }
 
 func (tree *AvlTree[T]) replaceRoot(newRoot *Node[T]) {
