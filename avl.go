@@ -200,16 +200,6 @@ func (tree *AvlTree[T]) NewIterator() *AvlTreeIterator[T] {
 	}
 }
 
-// Print the tree in-order
-func (tree *AvlTree[T]) PrintTree(node *Node[T]) {
-	if node == nil {
-		return
-	}
-	tree.PrintTree(node.left)
-	fmt.Println(node.value)
-	tree.PrintTree(node.right)
-}
-
 // %%% Iterator public methods %%%
 
 // Returns the next value in the tree and its index in the in-order traversal
