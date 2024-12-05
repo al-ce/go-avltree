@@ -169,7 +169,7 @@ func (tree *AvlTree[T]) GetMax() (T, error) {
 	return curr.value, nil
 }
 
-func (tree *AvlTree[T]) GetSize() int {
+func (tree *AvlTree[T]) Size() int {
 	return tree.size
 }
 

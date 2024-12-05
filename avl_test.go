@@ -121,7 +121,7 @@ func populateTree(t *testing.T, values []int) *AvlTree[int] {
 	for i, v := range values {
 		tree.Add(v)
 		assert(tree.Contains(v), true, fmt.Sprintf("tree.Add(%v", v), t)
-		assert(i+1, tree.GetSize(), "tree size after Add", t)
+		assert(i+1, tree.Size(), "tree size after Add", t)
 
 	}
 	return tree
@@ -199,12 +199,12 @@ func TestRemoveValues(t *testing.T) {
 	for _, testCase := range cases {
 		for _, v := range testCase {
 			tree := populateTree(t, testCase)
-			size := tree.GetSize()
+			size := tree.Size()
 
 			// Successful remove returns true, so negate this to check against
 			// `Contains(value) == false`
 			assert(tree.Remove(v), !tree.Contains(v), "tree.Remove(v)", t)
-			assert(tree.GetSize(), size-1, "tree.size after Remove", t)
+			assert(tree.Size(), size-1, "tree.size after Remove", t)
 
 			// Ensure order was maintained during removal
 			actualValues := tree.InorderTraverse(tree.root, nil)
@@ -220,9 +220,9 @@ func TestRemoveValues(t *testing.T) {
 func TestRemoveNonexistingValue(t *testing.T) {
 	values := []int{1, 2, 3}
 	tree := populateTree(t, values)
-	size := tree.GetSize()
+	size := tree.Size()
 	assert(tree.Remove(0), tree.Contains(0), "tree.Remove(0)", t)
-	assert(tree.GetSize(), size, "tree.size after Remove", t)
+	assert(tree.Size(), size, "tree.size after Remove", t)
 }
 
 // Test removing multiple values until the tree is empty
@@ -233,7 +233,7 @@ func TestRemoveMultipleValues(t *testing.T) {
 			assert(tree.Remove(v), !tree.Contains(v), fmt.Sprintf("tree.Remove(%v)", v), t)
 		}
 		assert(tree.IsEmpty(), true, "tree.IsEmpty()", t)
-		assert(tree.GetSize(), 0, "tree.size after Remove", t)
+		assert(tree.Size(), 0, "tree.size after Remove", t)
 	}
 }
 
@@ -242,7 +242,7 @@ func TestClearTree(t *testing.T) {
 	tree := populateTree(t, testCase)
 	tree.Clear()
 	assert(tree.IsEmpty(), true, "tree.Clear()", t)
-	assert(tree.GetSize(), 0, "tree.size after Remove", t)
+	assert(tree.Size(), 0, "tree.size after Remove", t)
 }
 
 func TestGetMinNode(t *testing.T) {
