@@ -172,18 +172,21 @@ func (tree *AvlTree[T]) Size() int {
 	return tree.size
 }
 
-// Returns a slice of the tree's values in-order. Appends to the provided
-// pointer to a slice. If the pointer is nil, a new slice is created.
-func (tree *AvlTree[T]) InorderTraverse(node *Node[T], queue *[]T) []T {
-	if queue == nil {
-		queue = &[]T{}
-	}
+func (tree *AvlTree[T]) inOrderTraverseHelper(node *Node[T], queue *[]T) []T {
 	if node == nil {
 		return *queue
 	}
-	*queue = tree.InorderTraverse(node.left, queue)
+	*queue = tree.inOrderTraverseHelper(node.left, queue)
 	*queue = append(*queue, node.value)
-	*queue = tree.InorderTraverse(node.right, queue)
+	*queue = tree.inOrderTraverseHelper(node.right, queue)
+	return *queue
+}
+
+// Returns a slice of the tree's values in-order. Appends to the provided
+// pointer to a slice. If the pointer is nil, a new slice is created.
+func (tree *AvlTree[T]) InOrderTraverse() []T {
+	queue := &[]T{}
+	tree.inOrderTraverseHelper(tree.root, queue)
 	return *queue
 }
 

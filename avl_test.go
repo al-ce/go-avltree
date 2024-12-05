@@ -132,7 +132,7 @@ func TestIntegerTree(t *testing.T) {
 
 	for _, testCase := range cases {
 		tree := populateTree(t, testCase)
-		actual := tree.InorderTraverse(tree.root, nil)
+		actual := tree.InOrderTraverse()
 		expected := slices.Clone(testCase)
 		slices.Sort(expected)
 		assertSlice(actual, expected, "tree.Add(...)", t)
@@ -157,7 +157,7 @@ func TestStringTree(t *testing.T) {
 			assert(tree.Contains(value), true, fmt.Sprintf("tree.Add(%v)", value), t)
 		}
 
-		actual := tree.InorderTraverse(tree.root, nil)
+		actual := tree.InOrderTraverse()
 		expected := slices.Clone(testCase)
 		slices.Sort(expected)
 
@@ -181,7 +181,7 @@ func TestFloatTree(t *testing.T) {
 			assert(tree.Contains(value), true, fmt.Sprintf("tree.Add(%v)", value), t)
 		}
 
-		actual := tree.InorderTraverse(tree.root, nil)
+		actual := tree.InOrderTraverse()
 		expected := slices.Clone(testCase)
 		slices.Sort(expected)
 		assertSlice(actual, expected, "tree.Add(...)", t)
@@ -207,7 +207,7 @@ func TestRemoveValues(t *testing.T) {
 			assert(tree.Size(), size-1, "tree.size after Remove", t)
 
 			// Ensure order was maintained during removal
-			actualValues := tree.InorderTraverse(tree.root, nil)
+			actualValues := tree.InOrderTraverse()
 			expectedValues := slices.Clone(actualValues)
 			slices.Sort(expectedValues)
 			assertSlice(actualValues, expectedValues, "tree.Remove(v)", t)
